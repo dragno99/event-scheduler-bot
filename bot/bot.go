@@ -59,20 +59,7 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input")
 		return
 	}
-	srv, err := scheduler.GetNewService()
 
-	if err != nil {
-		_, _ = s.ChannelMessageSend(m.ChannelID, "Faild to create event")
-		return
-	}
-
-	event, err = srv.Events.Insert("primary", event).Do()
-
-	if err != nil {
-		_, _ = s.ChannelMessageSend(m.ChannelID, "Faild to create event")
-		return
-	}
-	_, _ = s.ChannelMessageSend(m.ChannelID, "Event created")
-	return
+	_, _ = s.ChannelMessageSend(m.ChannelID, scheduler.Schedule(event))
 
 }
