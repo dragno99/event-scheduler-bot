@@ -2,10 +2,13 @@ package bot
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 
 	"github.com/dragno99/event-scheduler-bot/config"
+	"github.com/dragno99/event-scheduler-bot/helper"
+	"github.com/dragno99/event-scheduler-bot/scheduler"
 )
 
 var BotID string
@@ -16,14 +19,14 @@ func Start() {
 	goBot, err := discordgo.New("Bot " + config.Token)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("start", err.Error())
 		return
 	}
 
 	user, err := goBot.User("@me")
 
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("start2", err.Error())
 		return
 	}
 
@@ -34,7 +37,7 @@ func Start() {
 	err = goBot.Open()
 
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("here", err.Error())
 		return
 	}
 	fmt.Println("Bot is running...")
@@ -44,9 +47,32 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == BotID {
 		return
 	}
-	if m.Content != "ping" {
-		_, _ = s.ChannelMessageSend(m.ChannelID, m.Content)
-	} else if m.Content == "pong" {
-		_, _ = s.ChannelMessageSend(m.ChannelID, "ping")
+	content := strings.SplitAfter(m.Content, "\n")
+	if content[0] != "!schedule" {
+		return
 	}
+	content = append(content[0:0], content[1:]...)
+
+	event, err := helper.GetEvent(content)
+
+	if err != nil {
+		_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input")
+		return
+	}
+	srv, err := scheduler.GetNewService()
+
+	if err != nil {
+		_, _ = s.ChannelMessageSend(m.ChannelID, "Faild to create event")
+		return
+	}
+
+	event, err = srv.Events.Insert("primary", event).Do()
+
+	if err != nil {
+		_, _ = s.ChannelMessageSend(m.ChannelID, "Faild to create event")
+		return
+	}
+	_, _ = s.ChannelMessageSend(m.ChannelID, "Event created")
+	return
+
 }
