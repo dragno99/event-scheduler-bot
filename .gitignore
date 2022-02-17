@@ -1,2 +1,10 @@
 # Ignore files related to API keys
 .env
+
+config.json
+
+credentials.json
+
+token.json
+
+*.json

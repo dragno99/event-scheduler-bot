@@ -19,7 +19,6 @@ var (
 )
 
 func ReadConfig() error {
-	fmt.Println("Reading config file...")
 
 	file, err := ioutil.ReadFile("./config.json")
 
