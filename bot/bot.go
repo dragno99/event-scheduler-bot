@@ -8,7 +8,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 
 	"github.com/dragno99/event-scheduler-bot/config"
-	"github.com/dragno99/event-scheduler-bot/helper"
 	"github.com/dragno99/event-scheduler-bot/scheduler"
 )
 
@@ -56,28 +55,21 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if command == "!schedule" {
 
-		event, err := helper.GetEvent(content)
-
-		if err != nil {
-			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input.")
-			return
-		}
-
-		_, _ = s.ChannelMessageSend(m.ChannelID, scheduler.ScheduleEvent(event))
+		_, _ = s.ChannelMessageSend(m.ChannelID, scheduler.ScheduleEvent(content))
 
 	} else if command == "!upcoming" {
 		_, _ = s.ChannelMessageSend(m.ChannelID, scheduler.ShowUpcomingEvent())
 	} else if command == "!update" {
 
 		if len(content) != 2 {
-			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input1.")
+			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input.")
 			return
 		}
 
 		idx, err := strconv.Atoi(strings.TrimSpace(content[0]))
 
 		if err != nil || idx > len(scheduler.UpcomingEvents) || idx < 1 {
-			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input1.")
+			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input.")
 			return
 		}
 

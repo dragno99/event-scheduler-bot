@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dragno99/event-scheduler-bot/helper"
 	"google.golang.org/api/calendar/v3"
 )
 
@@ -16,12 +17,18 @@ var (
 	}
 )
 
-func ScheduleEvent(event *calendar.Event) string {
+func ScheduleEvent(content []string) string {
 	srv, err := GetNewService()
 
 	if err != nil {
 		fmt.Println("Failed to create event service")
 		return "Failed to create event."
+	}
+
+	event, err := helper.GetEvent(content)
+
+	if err != nil {
+		return "Enter a valid input."
 	}
 
 	event, err = srv.Events.Insert("primary", event).ConferenceDataVersion(1).Do()
@@ -31,6 +38,7 @@ func ScheduleEvent(event *calendar.Event) string {
 		return "Failed to create event."
 	}
 	fmt.Println("link", event.HangoutLink)
+
 	return "Event successfully scheduled.\n\nGoogle meet's link: " + event.HangoutLink
 }
 
@@ -75,6 +83,7 @@ func ShowUpcomingEvent() string {
 
 func AddAttendeesInEvent(eventId string, attendee string) string {
 	srv, err := GetNewService()
+
 	if err != nil {
 		fmt.Println(err.Error())
 		return "Updation failed."

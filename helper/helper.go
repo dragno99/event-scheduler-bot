@@ -9,7 +9,7 @@ import (
 
 func GetEvent(data []string) (*calendar.Event, error) {
 
-	if len(data) != 4 {
+	if len(data) < 4 {
 		return nil, errors.New("enter a valid input")
 	}
 
@@ -39,6 +39,7 @@ func GetEvent(data []string) (*calendar.Event, error) {
 			},
 		},
 	}
+
 	for _, x := range attendee {
 		event.Attendees = append(event.Attendees, &calendar.EventAttendee{
 			Email: strings.TrimSpace(x),
