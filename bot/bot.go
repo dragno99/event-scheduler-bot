@@ -76,8 +76,6 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		idx, err := strconv.Atoi(strings.TrimSpace(content[0]))
 
-		fmt.Println(idx)
-
 		if err != nil || idx > len(scheduler.UpcomingEvents) || idx < 1 {
 			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input1.")
 			return
