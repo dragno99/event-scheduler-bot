@@ -77,6 +77,22 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		_, _ = s.ChannelMessageSend(m.ChannelID, scheduler.AddAttendeesInEvent(scheduler.UpcomingEvents[idx-1].EventId, content[1]))
 
+	} else if command == "!delete" {
+
+		if len(content) != 1 {
+			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input.")
+			return
+		}
+
+		idx, err := strconv.Atoi(strings.TrimSpace(content[0]))
+
+		if err != nil || idx > len(scheduler.UpcomingEvents) || idx < 1 {
+			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input1.")
+			return
+		}
+
+		_, _ = s.ChannelMessageSend(m.ChannelID, scheduler.DeleteEvent(scheduler.UpcomingEvents[idx-1].EventId))
+
 	} else if command == "!hey" {
 		_, _ = s.ChannelMessageSend(m.ChannelID, "Hey "+m.Author.Username)
 	}

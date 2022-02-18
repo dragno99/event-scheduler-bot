@@ -63,7 +63,7 @@ func ShowUpcomingEvent() string {
 
 		UpcomingEvents = append(UpcomingEvents[0:0], UpcomingEvents[len(UpcomingEvents):]...)
 
-		for _, item := range events.Items {
+		for idx, item := range events.Items {
 			date := item.Start.DateTime
 			UpcomingEvents = append(UpcomingEvents, struct {
 				Summary string
@@ -75,7 +75,7 @@ func ShowUpcomingEvent() string {
 			if date == "" {
 				date = item.Start.Date
 			}
-			res += fmt.Sprintf("-\t%v (%v)\n\n", item.Summary, date)
+			res += fmt.Sprintf("%v ) -\t%v (%v)\n\n", idx+1, item.Summary, date)
 		}
 		return res
 	}
@@ -112,5 +112,19 @@ func AddAttendeesInEvent(eventId string, attendee string) string {
 	}
 
 	return "Event update successfully !!!"
+
+}
+
+func DeleteEvent(eventId string) string {
+	srv, err := GetNewService()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return "Deletion failed."
+	}
+
+	_ = srv.Events.Delete("primary", eventId).Do()
+
+	return "Event deleted successfully !!!"
 
 }
