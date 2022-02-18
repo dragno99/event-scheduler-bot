@@ -13,7 +13,9 @@ A simple Discord bot created in golang that allows admin of a server to create s
  * First line starts with `!schedule` 
  * Second line will contain the summary of event.
  * Third line will contain the start date and time of event. `YYYY-MM-DDTHH-MM-SS` , i.e `2022-02-22T09-00-00`
-
+ * Fourth line will contain the end date and time of event. `YYYY-MM-DDTHH-MM-SS` , i.e `2022-02-22T11-00-00`
+ * Fifth line will contain the email address of attendees seperated by spaces. i.e `xyz@gmai.com abx@gmail.com pqr@work.ac.in`
+ 
 ### Running the bot
  * Make the following *. json* file that holds the bot key:
 
