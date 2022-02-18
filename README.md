@@ -4,8 +4,8 @@ A simple Discord bot created in golang that allows admin of a server to create s
 
 ### Functions of bot
  * Create and schedule an event.
- * Add attendees in an already scheduled event.
  * Show upcoming events.
+ * Add attendees in an already scheduled event.
  * Delete an event.
 
 ### Create and schedule an event
@@ -15,6 +15,18 @@ A simple Discord bot created in golang that allows admin of a server to create s
  * Third line will contain the start date and time of event. `YYYY-MM-DDTHH-MM-SS` , i.e `2022-02-22T09-00-00`
  * Fourth line will contain the end date and time of event. `YYYY-MM-DDTHH-MM-SS` , i.e `2022-02-22T11-00-00`
  * Fifth line will contain the email address of attendees seperated by spaces. i.e `xyz@gmai.com abx@gmail.com pqr@work.ac.in`
+
+### Show upcoming events.
+ * To see upcoming events, enter command `!upcoming`
+
+### Add attendees in an already scheduled event.
+ * To add attendees in an already scheduled event , first you need to see upcoming event by the `!upcoming` command.
+ * After getting the list of upcoming event, You can add any number of attendes by the following command.
+ * First line starts with `!update` 
+ * Second line will the index of event in which you are going to add your attendee. i.e `5`
+ * Third line will contain the email address of attendees seperated by spaces. i.e `xyz@gmai.com abx@gmail.com pqr@work.ac.in`
+
+
  
 ### Running the bot
  * Make the following *. json* file that holds the bot key:
