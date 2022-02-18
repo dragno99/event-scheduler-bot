@@ -41,7 +41,8 @@ A simple Discord bot created in golang that allows admin of a server to create s
 
 
 ### Google calender.
-![image](https://user-images.githubusercontent.com/76701875/154682613-cdb51565-d245-4aac-a95c-b7407dca183e.png)
+ * Screenshot of google calender.
+ * ![image](https://user-images.githubusercontent.com/76701875/154682613-cdb51565-d245-4aac-a95c-b7407dca183e.png)
 
 
 
