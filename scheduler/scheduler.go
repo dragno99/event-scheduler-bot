@@ -37,7 +37,7 @@ func ScheduleEvent(content []string) string {
 		fmt.Println(err.Error())
 		return "Failed to create event."
 	}
-	fmt.Println("link", event.HangoutLink)
+	// fmt.Println("link", event.HangoutLink)
 
 	return "Event successfully scheduled.\n\nGoogle meet's link: " + event.HangoutLink
 }

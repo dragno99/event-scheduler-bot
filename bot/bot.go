@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -13,6 +14,8 @@ import (
 
 var BotID string
 var goBot *discordgo.Session
+
+var mutex sync.Mutex
 
 func Start() {
 
@@ -48,53 +51,70 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == BotID {
 		return
 	}
+	go HandleRequest(s, m)
+}
 
+func HandleRequest(s *discordgo.Session, m *discordgo.MessageCreate) {
 	content := strings.SplitAfter(m.Content, "\n")
 	command := strings.TrimSpace(content[0])
 	content = append(content[0:0], content[1:]...)
 
-	if command == "!schedule" {
-
-		_, _ = s.ChannelMessageSend(m.ChannelID, scheduler.ScheduleEvent(content))
-
-	} else if command == "!upcoming" {
-		_, _ = s.ChannelMessageSend(m.ChannelID, scheduler.ShowUpcomingEvent())
-	} else if command == "!update" {
-
-		if len(content) != 2 {
-			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input.")
-			return
+	switch command {
+	case "!hey":
+		{
+			PrintRequest(s, m, "Hey "+m.Author.Username)
 		}
-
-		idx, err := strconv.Atoi(strings.TrimSpace(content[0]))
-
-		if err != nil || idx > len(scheduler.UpcomingEvents) || idx < 1 {
-			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input.")
-			return
+	case "!schedule":
+		{
+			PrintRequest(s, m, scheduler.ScheduleEvent(content))
 		}
-
-		content[1] = strings.TrimSpace(content[1])
-
-		_, _ = s.ChannelMessageSend(m.ChannelID, scheduler.AddAttendeesInEvent(scheduler.UpcomingEvents[idx-1].EventId, content[1]))
-
-	} else if command == "!delete" {
-
-		if len(content) != 1 {
-			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input.")
-			return
+	case "!upcoming":
+		{
+			PrintRequest(s, m, scheduler.ShowUpcomingEvent())
 		}
+	case "!update":
+		{
 
-		idx, err := strconv.Atoi(strings.TrimSpace(content[0]))
+			if len(content) != 2 {
+				PrintRequest(s, m, "Enter a valid input.")
+				return
+			}
 
-		if err != nil || idx > len(scheduler.UpcomingEvents) || idx < 1 {
-			_, _ = s.ChannelMessageSend(m.ChannelID, "Enter a valid input1.")
-			return
+			idx, err := strconv.Atoi(strings.TrimSpace(content[0]))
+
+			if err != nil || idx > len(scheduler.UpcomingEvents) || idx < 1 {
+				PrintRequest(s, m, "Enter a valid input.")
+				return
+			}
+
+			content[1] = strings.TrimSpace(content[1])
+			PrintRequest(s, m, scheduler.AddAttendeesInEvent(scheduler.UpcomingEvents[idx-1].EventId, content[1]))
+
 		}
+	case "!delete":
+		{
+			if len(content) != 1 {
+				PrintRequest(s, m, "Enter a valid input.")
+				return
+			}
 
-		_, _ = s.ChannelMessageSend(m.ChannelID, scheduler.DeleteEvent(scheduler.UpcomingEvents[idx-1].EventId))
+			idx, err := strconv.Atoi(strings.TrimSpace(content[0]))
 
-	} else if command == "!hey" {
-		_, _ = s.ChannelMessageSend(m.ChannelID, "Hey "+m.Author.Username)
+			if err != nil || idx > len(scheduler.UpcomingEvents) || idx < 1 {
+				PrintRequest(s, m, "Enter a valid input.")
+				return
+			}
+			PrintRequest(s, m, scheduler.DeleteEvent(scheduler.UpcomingEvents[idx-1].EventId))
+
+		}
 	}
+
+}
+
+func PrintRequest(s *discordgo.Session, m *discordgo.MessageCreate, message string) {
+
+	mutex.Lock()
+	_, _ = s.ChannelMessageSend(m.ChannelID, message)
+	mutex.Unlock()
 
 }
